@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: manage clinic
+  datasource:
+    # 1. Thông tin kết nối
+    url: jdbc:mysql://localhost:3306/clinic
+    username: root
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  logging:
+    level:
+
+  jpa:
+    show-sql: true
+    # 2. Cấu hình Hibernate (ORM)
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+        use_sql_comments: true
+  mail:
+    port: 465
+    host: xxxx
+    password: xxxx
+    username: xxxx
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            enable: true
+application:
+  security:
+    jwt:
+      secret_key:
+        dHJpbmhxdWFuZ2h1eXJhdHlldXRoaWV1bWFpbmdhbm5u
+      expiration:
+        86400000
+      refresh-token:
+        expiration:
+          604800000
+openapi:
+  service:
+    api-docs: backend-service
+    title: Backend-service
+    server: http://localhost:8080
+    version: 1.0.0
