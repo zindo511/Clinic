@@ -3,6 +3,7 @@ package vn.huy.clinic.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -39,8 +40,8 @@ public class DoctorController {
     public ResponseEntity<ApiResponse<Page<DoctorResponse>>> getDoctors(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Long specializationId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "0") @Min(1) int page,
+            @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size,
             @RequestParam(defaultValue = "firstName") String sortBy,
             @RequestParam(defaultValue = "ASC") String sortDir
     ) {

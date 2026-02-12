@@ -44,6 +44,7 @@ public class DoctorServiceImpl implements DoctorService {
     private final PrescriptionItemRepository prescriptionItemRepository;
 
     @Override
+    @Transactional
     public Page<DoctorResponse> searchDoctors(String keyword, Long specializationId, int page, int size, String sortBy, String sortDir) {
         // Xử lý hướng sắp xếp
         Sort.Direction direction = sortDir.equalsIgnoreCase("desc")
