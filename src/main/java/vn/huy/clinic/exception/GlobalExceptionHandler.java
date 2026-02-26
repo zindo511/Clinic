@@ -101,7 +101,7 @@ public class GlobalExceptionHandler {
     }
 
     // --- 5. XỬ LÝ TRÙNG LẶP / CONFLICT (409) ---
-    @ExceptionHandler({InvalidDataException.class, DuplicateResourceException.class})
+    @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<ErrorResponse> handleConflictException(Exception e, WebRequest request) {
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .timestamp(Instant.now())
@@ -111,6 +111,19 @@ public class GlobalExceptionHandler {
                 .message(e.getMessage())
                 .build();
         return ResponseEntity.status(CONFLICT).body(errorResponse);
+    }
+
+    // XỬ LÝ LỖI SAI DỮ LIỆU (400 BAD REQUEST)
+    @ExceptionHandler(InvalidDataException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidDataException(InvalidDataException e, WebRequest request) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .timestamp(Instant.now())
+                .status(BAD_REQUEST.value())
+                .error(BAD_REQUEST.getReasonPhrase())
+                .path(request.getDescription(false).replace("uri=", ""))
+                .message(e.getMessage())
+                .build();
+        return ResponseEntity.status(BAD_REQUEST).body(errorResponse);
     }
 
     // 6. Xử lý lỗi hệ thống (500)

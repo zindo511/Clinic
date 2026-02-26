@@ -40,7 +40,7 @@ public class DoctorController {
     public ResponseEntity<ApiResponse<Page<DoctorResponse>>> getDoctors(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Long specializationId,
-            @RequestParam(defaultValue = "0") @Min(1) int page,
+            @RequestParam(defaultValue = "1") @Min(1) int page,
             @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size,
             @RequestParam(defaultValue = "firstName") String sortBy,
             @RequestParam(defaultValue = "ASC") String sortDir
@@ -72,7 +72,7 @@ public class DoctorController {
 
     @GetMapping("/me")
     @Operation(summary = "Lấy thông tin hồ sơ của bác sĩ đang đăng nhập")
-    @PreAuthorize("hasRole('DOCTOR'))")
+    @PreAuthorize("hasRole('DOCTOR')")
     public ResponseEntity<ApiResponse<DoctorResponse>> getDoctorProfile() {
         DoctorResponse profile = doctorService.getDoctorProfile();
         return ResponseEntity.ok(ApiResponse.success("Lấy hồ sơ cá nhân thành công", profile));

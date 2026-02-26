@@ -1,5 +1,6 @@
 package vn.huy.clinic.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -7,6 +8,7 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -74,5 +76,16 @@ public class PatientController {
     public ResponseEntity<ApiResponse<Void>> deletePatient(@PathVariable Integer id) {
         patientService.deletePatient(id);
         return ResponseEntity.ok(ApiResponse.success("Xóa bệnh nhân thành công", null));
+    }
+
+    @GetMapping("/me")
+    @Operation(summary = "Thông tin của bệnh nhân đang đăng nhập")
+    @PreAuthorize("hasRole('PATIENT')")
+    public ResponseEntity<ApiResponse<PatientResponse>> getProfile(
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        String username = userDetails.getUsername();
+        PatientResponse patientResponse = patientService.getProfile(username);
+        return ResponseEntity.ok(ApiResponse.success("Lấy thành công hồ sơ của bệnh nhân", patientResponse));
     }
 }

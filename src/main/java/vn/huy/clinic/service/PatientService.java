@@ -21,4 +21,6 @@ public interface PatientService {
     PatientResponse updatePatient(Integer id, vn.huy.clinic.dto.Patient.PatientRequest request);
 
     void deletePatient(Integer id);
+
+    PatientResponse getProfile(String username);
 }

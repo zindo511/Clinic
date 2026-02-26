@@ -13,8 +13,12 @@ public interface PatientRepository extends JpaRepository<Patient, Integer> {
 
     Optional<Patient> findByUser_Id(Integer userId);
 
+    Optional<Patient> findByUser_Username(String username);
+
     @Query("select p from Patient p where " +
             "(:keyword is null or p.lastName like concat('%', :keyword, '%')) " +
             "and (:phone is null or p.phone = :phone)")
     List<Patient> searchPatient(String keyword, String phone);
+
+
 }

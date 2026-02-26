@@ -129,4 +129,14 @@ public class PatientServiceImpl implements PatientService {
             }
             patientRepository.deleteById(id);
         }
+
+    @Override
+    public PatientResponse getProfile(String username) {
+        Patient patient = patientRepository.findByUser_Username(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy bệnh nhân"));
+
+        return PatientResponse.fromEntity(patient);
+    }
+
+
 }

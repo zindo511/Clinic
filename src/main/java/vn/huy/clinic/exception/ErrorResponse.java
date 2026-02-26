@@ -16,8 +16,8 @@ import java.util.Map;
 public class ErrorResponse {
     private Instant timestamp;
     private int status;
-    private String path;
     private String error;
+    private String path;
     private String message;
 
     // Lưu trữ danh sách lỗi của từng ô nhập liệu
