@@ -65,7 +65,7 @@ public class DoctorServiceImpl implements DoctorService {
     @Transactional(readOnly = true)
     public DoctorResponse getDoctorById(Integer id) {
         log.info("Đang truy xuất thông tin bác sĩ với id: {}", id);
-        Doctor doctor = doctorRepository.findById(id)
+        Doctor doctor = doctorRepository.findByIdWithSpecializations(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy bác sĩ với ID: " + id));
         return DoctorResponse.fromEntity(doctor);
     }
@@ -106,8 +106,9 @@ public class DoctorServiceImpl implements DoctorService {
         User user = (User) auth.getPrincipal();
 
         // Tìm bác sĩ
-        Doctor doctor = doctorRepository.findByUser_Id(user.getId())
+        Doctor doctor = doctorRepository.findByUserIdWithSpecializations(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy thông tin bác sĩ"));
+
         return DoctorResponse.fromEntity(doctor);
     }
 
@@ -118,23 +119,10 @@ public class DoctorServiceImpl implements DoctorService {
         User user = (User) auth.getPrincipal();
 
         // Tìm bác sĩ
-        Doctor doctor = doctorRepository.findByUser_Id(user.getId())
+        Doctor doctor = doctorRepository.findByUserIdWithSpecializations(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy thông tin bác sĩ"));
         List<DoctorSchedule> schedules = scheduleRepository.findAllByDoctorId(doctor.getId());
         return schedules.stream().map(ScheduleResponse::fromEntity).toList();
-    }
-
-    @Override
-    public List<AppointmentResponse> getDoctorAppointments(LocalDate date, String status) {
-        log.info("Xem danh sách các bệnh nhân của mình trong ngày: {}", date);
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) auth.getPrincipal();
-
-        // Tìm bác sĩ
-        Doctor doctor = doctorRepository.findByUser_Id(user.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy thông tin bác sĩ"));
-        List<Appointment> appointments = appointmentRepository.findDoctorAppointments(doctor.getId(), date, status);
-        return appointments.stream().map(AppointmentResponse::fromEntity).toList();
     }
 
     @Transactional
@@ -173,7 +161,7 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     @Transactional
     public DoctorAppointmentResponse completeAppointment(Integer appointmentId, PrescriptionPatient prescriptionPatient) {
-        Appointment appointment = appointmentRepository.findById(appointmentId)
+        Appointment appointment = appointmentRepository.findByIdWithPatientAndDoctor(appointmentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy thông tin cuộc hẹn"));
         Patient patient = appointment.getPatient();
         Doctor doctor = appointment.getDoctor();

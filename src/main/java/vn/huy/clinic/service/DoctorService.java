@@ -27,8 +27,6 @@ public interface DoctorService {
 
     List<ScheduleResponse> getDoctorSchedule();
 
-    List<AppointmentResponse> getDoctorAppointments(LocalDate date, String status);
-
     Doctor updateDoctor(String username, DoctorUpdate doctorUpdate);
 
     DoctorResponse createDoctor(DoctorCreationRequest request);

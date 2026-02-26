@@ -13,13 +13,12 @@ import org.springframework.web.bind.annotation.*;
 import vn.huy.clinic.dto.ApiResponse;
 import vn.huy.clinic.dto.Appointment.AppointmentRequest;
 import vn.huy.clinic.dto.Appointment.AppointmentResponse;
-import vn.huy.clinic.exception.ResourceNotFoundException;
-import vn.huy.clinic.model.Appointment;
+import vn.huy.clinic.dto.Patient.PatientRequest;
+import vn.huy.clinic.dto.Patient.PatientResponse;
 import vn.huy.clinic.model.Patient;
-import vn.huy.clinic.model.User;
-import vn.huy.clinic.repository.PatientRepository;
-import vn.huy.clinic.repository.UserRepository;
 import vn.huy.clinic.service.PatientService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/patient")
@@ -28,16 +27,13 @@ import vn.huy.clinic.service.PatientService;
 public class PatientController {
 
     private final PatientService patientService;
-    private final UserRepository userRepository;
-    private final PatientRepository patientRepository;
 
     @GetMapping
     public ResponseEntity<ApiResponse<Page<Patient>>> getListPatients(
             @RequestParam(defaultValue = "1") @Min(1) int page,
             @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size,
             @RequestParam(defaultValue = "firstname") String sortBy,
-            @RequestParam(defaultValue = "DESC") String sortDir
-    ) {
+            @RequestParam(defaultValue = "DESC") String sortDir) {
         Page<Patient> patients = patientService.getAllPatients(page, size, sortBy, sortDir);
         return ResponseEntity.ok(ApiResponse.success("Danh sách bệnh nhân", patients));
     }
@@ -45,11 +41,38 @@ public class PatientController {
     @PostMapping("/create-appointment")
     public ResponseEntity<ApiResponse<AppointmentResponse>> createAppointment(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody @Valid AppointmentRequest request
-    ) {
+            @RequestBody @Valid AppointmentRequest request) {
         String username = userDetails.getUsername();
 
         AppointmentResponse appointment = patientService.createAppointment(username, request);
         return ResponseEntity.ok(ApiResponse.success("Tạo thành công cuộc hẹn", appointment));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<List<PatientResponse>>> searchPatient(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String phone) {
+        List<PatientResponse> patientResponses = patientService.searchPatient(keyword, phone);
+        return ResponseEntity.ok(ApiResponse.success("Tìm kiếm bệnh nhân thành công", patientResponses));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<PatientResponse>> getPatientById(@PathVariable Integer id) {
+        PatientResponse patientResponse = patientService.getPatientById(id);
+        return ResponseEntity.ok(ApiResponse.success("Lấy thông tin bệnh nhân thành công", patientResponse));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<PatientResponse>> updatePatient(
+            @PathVariable Integer id,
+            @RequestBody @Valid PatientRequest request) {
+        PatientResponse patientResponse = patientService.updatePatient(id, request);
+        return ResponseEntity.ok(ApiResponse.success("Cập nhật thông tin bệnh nhân thành công", patientResponse));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> deletePatient(@PathVariable Integer id) {
+        patientService.deletePatient(id);
+        return ResponseEntity.ok(ApiResponse.success("Xóa bệnh nhân thành công", null));
     }
 }

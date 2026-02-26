@@ -10,6 +10,7 @@ import vn.huy.clinic.model.Doctor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Integer> {
@@ -26,6 +27,12 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
             @Param("date") LocalDate date,
             @Param("statusName") String statusName
     );
+
+    @Query("SELECT a FROM Appointment a " +
+            "JOIN FETCH a.patient " +
+            "JOIN FETCH a.doctor " +
+            "WHERE a.id = :id")
+    Optional<Appointment> findByIdWithPatientAndDoctor(@Param("id") Integer id);
 
     boolean existsByDoctorAndAppointmentDatetimeBetween(Doctor doctor, LocalDateTime localDateTime, LocalDateTime localDateTime1);
 }

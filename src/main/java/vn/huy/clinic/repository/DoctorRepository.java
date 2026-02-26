@@ -26,7 +26,16 @@ public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
     Page<Doctor> searchDoctors(@Param("keyword") String keyword,
                                        @Param("specializationId") Long specializationId, Pageable pageable);
 
+    @Query("select d from Doctor d " +
+            "left join fetch d.specializations " +
+            "where d.id = :id")
+    Optional<Doctor> findByIdWithSpecializations(Integer id);
+
     boolean existsByUserId(Long id);
 
-    Optional<Doctor> findByUser_Id(Integer userId);
+    @Query("SELECT d FROM Doctor d " +
+            "LEFT JOIN FETCH d.specializations " +
+            "WHERE d.user.id = :userId")
+    Optional<Doctor> findByUserIdWithSpecializations(@Param("userId") Integer userId);
+
 }
